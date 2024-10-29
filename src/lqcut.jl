@@ -8,7 +8,7 @@ Perform the drift time correction on the LQ data using the DEP peak. The functio
     * `report`: NamedTuple of the histograms used for the fit, the cutoff values and the DEP edges
 """
 function lq_drift_time_correction(
-    lq_norm::Vector{Float64}, dt_eff::Vector{<:Unitful.RealOrRealQuantity}, e_cal::Vector{<:Unitful.Energy{<:Real}}, DEP_µ::Unitful.AbstractQuantity, DEP_σ::Unitful.AbstractQuantity; 
+    lq_norm::Vector{<:AbstractFloat}, dt_eff::Vector{<:Unitful.RealOrRealQuantity}, e_cal::Vector{<:Unitful.Energy{<:Real}}, DEP_µ::Unitful.AbstractQuantity, DEP_σ::Unitful.AbstractQuantity; 
     DEP_edgesigma::Float64=3.0 , mode::Symbol=:percentile, drift_cutoff_sigma::Float64 = 2.0, prehist_sigma::Float64=2.5, e_expression::Union{String,Symbol}="e", dt_eff_low_quantile::Float64=0.15, dt_eff_high_quantile::Float64=0.95)
 
     # get energy units to remve later
@@ -70,7 +70,8 @@ function lq_drift_time_correction(
 
     elseif mode == :double_gaussian # can be used for detectors with double peaks; not optimized yet
         #create histogram for drift time
-        drift_prehist = fit(Histogram, dt_eff_DEP, range(minimum(dt_eff_DEP), stop=maximum(dt_eff_DEP), length=100))
+        ideal_length = get_number_of_bins(dt_eff_DEP)
+        drift_prehist = fit(Histogram, dt_eff_DEP, range(minimum(dt_eff_DEP), stop=maximum(dt_eff_DEP), length=ideal_length))
         drift_prestats = estimate_single_peak_stats(drift_prehist)
 
         #fit histogram with double gaussian
