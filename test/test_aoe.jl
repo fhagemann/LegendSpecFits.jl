@@ -26,6 +26,7 @@ include("test_utils.jl")
     result_fit, report_fit = LegendSpecFits.fit_aoe_compton(compton_band_peakhists.peakhists, compton_band_peakhists.peakstats, compton_bands, uncertainty=true)
     μs = [result_fit[band].μ for band in compton_bands]
     σs = [result_fit[band].σ for band in compton_bands]
+    @info µs, σs
     result_fit_single, report_fit_single = LegendSpecFits.fit_aoe_corrections(compton_bands, μs, σs)
     result_fit_combined, report_fit_combined = LegendSpecFits.fit_aoe_compton_combined(compton_band_peakhists.peakhists, compton_band_peakhists.peakstats, compton_bands, result_fit_single, uncertainty=true)
 
